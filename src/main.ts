@@ -15,7 +15,6 @@ import { BonSortieComponent } from './app/pages/stock/bon-sortie/bon-sortie.comp
 import { FactureClientListComponent } from './app/pages/facture-client-list/facture-client-list/facture-client-list.component';
 
 import { CommandeClientListComponent } from './app/pages/commande-client-list/commande-client-list/commande-client-list.component';
-import { CommandeClientFormComponent } from './app/pages/commande-client-form/commande-client-form/commande-client-form.component';
 import { BonLivraisonComponent } from './app/pages/bon-livraison/bon-livraison/bon-livraison.component';
 import { authGuard } from './app/guards/auth.guard';
 
@@ -54,8 +53,7 @@ const routes: Routes = [
 
       // CommandeClient
       { path: 'commandeclient', component: CommandeClientListComponent },
-      { path: 'commandeclient/add', component: CommandeClientFormComponent },
-      { path: 'commandeclient/edit/:id', component: CommandeClientFormComponent },
+   
 
       // FactureClient
       { path: 'factureclient', component: FactureClientListComponent },

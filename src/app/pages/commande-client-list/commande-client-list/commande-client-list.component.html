@@ -1,33 +1,226 @@
-<div class="container mt-4">
-  <h2>Commandes Clients</h2>
-  <button class="btn btn-primary mb-3" (click)="onAdd()">Add New Commande</button>
+<div class="container mt-5">
+  <!-- Page title -->
+  <h2 class="mb-4 text-primary fw-bold">
+    <i class="bi bi-box-arrow-in-right me-2"></i> Commande Client
+  </h2>
 
-  <div *ngIf="loading">Loading...</div>
-  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+  <div class="card shadow-sm">
+    <!-- Filters header -->
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+      <h5 class="mb-0"><i class="bi bi-funnel-fill me-2"></i>Filtres de recherche</h5>
+      <button class="btn btn-light btn-sm" (click)="openModal()">
+        <i class="bi bi-plus-circle"></i> Nouveau
+      </button>
+    </div>
 
-  <table class="table table-bordered" *ngIf="!loading && commandes.length > 0">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Client ID</th>
-        <th>Date</th>
-        <th>Status</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let commande of commandes">
-        <td>{{ commande.id }}</td>
-        <td>{{ commande.clientId }}</td>
-        <td>{{ commande.date | date: 'shortDate' }}</td>
-        <td>{{ commande.status }}</td>
-        <td>
-          <button class="btn btn-sm btn-warning me-2" (click)="onEdit(commande.id!)">Edit</button>
-          <button class="btn btn-sm btn-danger" (click)="onDelete(commande.id!)">Delete</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+    <div class="card-body">
+      <!-- Filters -->
+      <form class="row g-3 mb-4">
+        <div class="col-md-4">
+          <label class="form-label small">Client</label>
+          <select class="form-select form-select-sm" [(ngModel)]="filterClientId" name="filterClientId">
+            <option [ngValue]="0">Tous</option>
+            <option *ngFor="let c of clients" [ngValue]="c.id">{{ c.name }}</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label small">Catégorie</label>
+          <select class="form-select form-select-sm" [(ngModel)]="filterCategorieId" name="filterCategorieId">
+            <option [ngValue]="0">Toutes</option>
+            <option *ngFor="let c of categories" [ngValue]="c.id">{{ c.name }}</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label small">Date</label>
+          <input type="date" class="form-control form-control-sm" [(ngModel)]="filterDate" name="filterDate">
+        </div>
+      </form>
 
-  <div *ngIf="!loading && commandes.length === 0">No commandes found.</div>
+      <!-- Table header -->
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h6 class="text-secondary mb-0"><i class="bi bi-list-ul me-2"></i>Liste des commandes</h6>
+        <small class="text-muted">{{ filteredCmds.length }} élément(s)</small>
+      </div>
+
+      <!-- Table -->
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>#</th><th>Date</th><th>Client</th><th>Catégorie</th><th>Référence</th>
+              <th>Total</th><th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let c of filteredCmds">
+              <td>{{ c.id }}</td>
+              <td>{{ c.date }}</td>
+              <td>{{ clientName(c.clientId) }}</td>
+              <td>{{ getCategoryName(c.categorieId) }}</td>
+              <td>{{ c.reference }}</td>
+              <td><span class="badge bg-success">{{ totalCmdAmount(c) | number:'1.2-2' }} €</span></td>
+              <td class="text-end">
+                <button class="btn btn-sm btn-outline-info me-1" (click)="viewCmd(c)" title="Voir"><i class="bi bi-eye"></i></button>
+                <button class="btn btn-sm btn-outline-secondary me-1" (click)="editCmd(c)" title="Modifier"><i class="bi bi-pencil"></i></button>
+                <button class="btn btn-sm btn-outline-danger" (click)="deleteCmd(c.id)" title="Supprimer"><i class="bi bi-trash"></i></button>
+              </td>
+            </tr>
+            <tr *ngIf="filteredCmds.length === 0">
+              <td colspan="7" class="text-center text-muted py-4">
+                <i class="bi bi-inbox fs-4"></i><br> Aucune commande trouvée
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Create/Edit Commande -->
+  <div class="modal show" *ngIf="showModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content shadow">
+        <form #cmdForm="ngForm" (ngSubmit)="saveCmd(cmdForm)">
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title">{{ isEdit ? 'Modifier' : 'Nouvelle' }} Commande</h5>
+            <button type="button" class="btn-close btn-close-white" (click)="closeModal()"></button>
+          </div>
+
+          <div class="modal-body">
+            <!-- Header fields -->
+            <div class="row gy-3">
+              <div class="col-md-4">
+                <label class="form-label">Date</label>
+                <input type="date" class="form-control form-control-sm" [(ngModel)]="newCmd.date" name="date" required>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Catégorie</label>
+                <select class="form-select form-select-sm" [(ngModel)]="newCmd.categorieId" name="categorieId" required>
+                  <option [ngValue]="0" disabled>Choisir...</option>
+                  <option *ngFor="let c of categories" [ngValue]="c.id">{{ c.name }}</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Client</label>
+                <select class="form-select form-select-sm" [(ngModel)]="newCmd.clientId" name="clientId" required>
+                  <option [ngValue]="0" disabled>Choisir...</option>
+                  <option *ngFor="let cl of clients" [ngValue]="cl.id">{{ cl.name }}</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Commande n°</label>
+                <input class="form-control form-control-sm" [(ngModel)]="newCmd.orderNumber" name="orderNumber">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">Objet</label>
+                <input class="form-control form-control-sm" [(ngModel)]="newCmd.objet" name="objet">
+              </div>
+            </div>
+
+            <hr>
+
+            <!-- Line input -->
+            <div class="row gy-3 align-items-end mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Article</label>
+                <div class="input-group input-group-sm">
+                  <select class="form-select" [(ngModel)]="line.articleId" name="articleId" (change)="onArticleChange()">
+                    <option [ngValue]="0" disabled>Choisir...</option>
+                    <option *ngFor="let a of articles" [ngValue]="a.id">
+                      {{ a.name }} ({{ a.unitPrice }} €)
+                    </option>
+                  </select>
+                  <button type="button" class="btn btn-outline-secondary" (click)="addNewArticle()">+</button>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">PU</label>
+                <input type="number" class="form-control form-control-sm" [(ngModel)]="line.unitPrice" name="unitPrice" min="0">
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">Qté</label>
+                <input type="number" class="form-control form-control-sm" [(ngModel)]="line.quantity" name="quantity" min="1">
+              </div>
+              <div class="col-auto">
+                <button type="button" class="btn btn-sm btn-outline-primary" (click)="addLine()">+ Ligne</button>
+              </div>
+            </div>
+
+            <!-- Lines table -->
+            <table *ngIf="newCmd.lines.length" class="table table-sm table-bordered mb-0">
+              <thead class="table-light">
+                <tr><th>Article</th><th>PU</th><th>Qté</th><th>Total</th><th></th></tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let l of newCmd.lines">
+                  <td>{{ getArticleName(l.articleId) }}</td>
+                  <td>{{ l.unitPrice }}</td>
+                  <td>{{ l.quantity }}</td>
+                  <td>{{ lineTotal(l) }}</td>
+                  <td><button type="button" class="btn btn-sm btn-outline-danger" (click)="removeLine(l)">×</button></td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th colspan="3" class="text-end">Total :</th>
+                  <th colspan="2">{{ grandTotal() }} €</th>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">{{ isEdit ? 'Mettre à jour' : 'Enregistrer' }}</button>
+            <button type="button" class="btn btn-outline-secondary" (click)="closeModal()">Annuler</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- View modal -->
+  <div class="modal show" *ngIf="showViewModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content shadow">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Détails Commande #{{ viewData?.id }}</h5>
+          <button type="button" class="btn-close btn-close-white" (click)="closeViewModal()"></button>
+        </div>
+        <div class="modal-body">
+          <dl class="row mb-4">
+            <dt class="col-sm-3">Date</dt><dd class="col-sm-9">{{ viewData?.date }}</dd>
+            <dt class="col-sm-3">Catégorie</dt><dd class="col-sm-9">{{ getCategoryName(viewData?.categorieId!) }}</dd>
+            <dt class="col-sm-3">N° cmd</dt><dd class="col-sm-9">{{ viewData?.orderNumber }}</dd>
+            <dt class="col-sm-3">Objet</dt><dd class="col-sm-9">{{ viewData?.objet }}</dd>
+            <dt class="col-sm-3">Client</dt><dd class="col-sm-9">{{ clientName(viewData?.clientId!) }}</dd>
+            <dt class="col-sm-3">Référence</dt><dd class="col-sm-9">{{ viewData?.reference }}</dd>
+          </dl>
+
+          <h6 class="text-secondary">Lignes d'articles</h6>
+          <table class="table table-sm table-bordered mb-0">
+            <thead class="table-light">
+              <tr><th>Article</th><th>PU</th><th>Qté</th><th>Total</th></tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let l of viewData?.lines">
+                <td>{{ getArticleName(l.articleId) }}</td>
+                <td>{{ l.unitPrice }} €</td>
+                <td>{{ l.quantity }}</td>
+                <td>{{ (l.unitPrice * l.quantity) | number:'1.2-2' }} €</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <th colspan="3" class="text-end">Total :</th>
+                <th>{{ totalCmdAmount(viewData!) | number:'1.2-2' }} €</th>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline-secondary" (click)="closeViewModal()">Fermer</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
