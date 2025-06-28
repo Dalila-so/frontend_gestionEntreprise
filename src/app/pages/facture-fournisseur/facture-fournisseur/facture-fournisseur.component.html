@@ -1,0 +1,275 @@
+<div class="container mt-5">
+  <h2 class="mb-4 text-primary fw-bold">
+    <i class="bi bi-file-text me-2"></i> Factures Fournisseur
+  </h2>
+
+  <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+      <h5 class="mb-0"><i class="bi bi-funnel-fill me-2"></i>Filtres de recherche</h5>
+      <button class="btn btn-light btn-sm" (click)="openModal()">
+        <i class="bi bi-plus-circle"></i> Nouvelle Facture
+      </button>
+    </div>
+
+    <div class="card-body">
+      <form class="row g-3 mb-4">
+        <div class="col-md-6">
+          <label class="form-label small">Fournisseur</label>
+          <select class="form-select form-select-sm" [(ngModel)]="filterSupplierId" name="filterSupplierId">
+            <option [ngValue]="0">Tous</option>
+            <option *ngFor="let s of suppliers" [ngValue]="s.id">{{ s.name }}</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label small">Date</label>
+          <input type="date" class="form-control form-control-sm" [(ngModel)]="filterDate" name="filterDate" />
+        </div>
+      </form>
+
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <h6 class="text-secondary mb-0"><i class="bi bi-list-ul me-2"></i>Liste des factures</h6>
+        <small class="text-muted">{{ filteredFactures.length }} élément(s)</small>
+      </div>
+
+      <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>#</th>
+              <th>Date</th>
+              <th>Fournisseur</th>
+              <th>Numéro Facture</th>
+              <th>Référence</th>
+              <th>Total</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let f of filteredFactures">
+              <td>{{ f.id }}</td>
+              <td>{{ f.date }}</td>
+              <td>{{ supplierName(f.supplierId) }}</td>
+              <td>{{ f.invoiceNumber }}</td>
+              <td>{{ f.reference }}</td>
+              <td><span class="badge bg-success">{{ totalFactureAmount(f) | number:'1.2-2' }} €</span></td>
+              <td class="text-end">
+                <button class="btn btn-sm btn-outline-info me-1" (click)="viewFacture(f)" title="Voir">
+                  <i class="bi bi-eye"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-secondary me-1" (click)="editFacture(f)" title="Modifier">
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger" (click)="deleteFacture(f.id)" title="Supprimer">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </td>
+            </tr>
+            <tr *ngIf="filteredFactures.length === 0">
+              <td colspan="7" class="text-center text-muted py-4">
+                <i class="bi bi-inbox text-secondary fs-4"></i><br />
+                Aucune facture trouvée
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Create/Edit Facture -->
+  <div class="modal show" *ngIf="showModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content shadow">
+        <form #factureForm="ngForm" (ngSubmit)="saveFacture(factureForm)">
+          <div class="modal-header bg-primary text-white">
+            <h5 class="modal-title">{{ isEdit ? 'Modifier' : 'Nouvelle' }} Facture Fournisseur</h5>
+            <button type="button" class="btn-close btn-close-white" (click)="closeModal()"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row gy-3">
+              <div class="col-md-4">
+                <label class="form-label">Date</label>
+                <input
+                  type="date"
+                  class="form-control form-control-sm"
+                  [(ngModel)]="newFacture.date"
+                  name="date"
+                  required
+                />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Fournisseur</label>
+                <select
+                  class="form-select form-select-sm"
+                  [(ngModel)]="newFacture.supplierId"
+                  name="supplierId"
+                  required
+                >
+                  <option [ngValue]="0" disabled>Choisir...</option>
+                  <option *ngFor="let s of suppliers" [ngValue]="s.id">{{ s.name }}</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Numéro Facture</label>
+                <input
+                  type="text"
+                  class="form-control form-control-sm"
+                  [(ngModel)]="newFacture.invoiceNumber"
+                  name="invoiceNumber"
+                />
+              </div>
+              <div class="col-md-12">
+                <label class="form-label">Référence</label>
+                <input
+                  type="text"
+                  class="form-control form-control-sm"
+                  [(ngModel)]="newFacture.reference"
+                  name="reference"
+                />
+              </div>
+            </div>
+
+            <hr />
+
+            <!-- Line input -->
+            <div class="row gy-3 align-items-end mb-3">
+              <div class="col-md-6">
+                <label class="form-label">Article</label>
+                <div class="input-group input-group-sm">
+                  <select
+                    class="form-select"
+                    [(ngModel)]="line.articleId"
+                    name="articleId"
+                    (change)="onArticleChange()"
+                  >
+                    <option [ngValue]="0" disabled>Choisir...</option>
+                    <option *ngFor="let a of articles" [ngValue]="a.id">
+                      {{ a.name }} ({{ a.unitPrice }} €)
+                    </option>
+                  </select>
+                  <button type="button" class="btn btn-outline-secondary" (click)="addNewArticle()">
+                    +
+                  </button>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">PU</label>
+                <input
+                  type="number"
+                  class="form-control form-control-sm"
+                  [(ngModel)]="line.unitPrice"
+                  name="unitPrice"
+                  min="0"
+                />
+              </div>
+              <div class="col-md-2">
+                <label class="form-label">Qté</label>
+                <input
+                  type="number"
+                  class="form-control form-control-sm"
+                  [(ngModel)]="line.quantity"
+                  name="quantity"
+                  min="1"
+                />
+              </div>
+              <div class="col-auto">
+                <button type="button" class="btn btn-sm btn-outline-primary" (click)="addLine()">
+                  + Ligne
+                </button>
+              </div>
+            </div>
+
+            <!-- Lines Table -->
+            <table *ngIf="newFacture.lines.length" class="table table-sm table-bordered mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>Article</th>
+                  <th>PU</th>
+                  <th>Qté</th>
+                  <th>Total</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let l of newFacture.lines">
+                  <td>{{ getArticleName(l.articleId) }}</td>
+                  <td>{{ l.unitPrice }}</td>
+                  <td>{{ l.quantity }}</td>
+                  <td>{{ lineTotal(l) }}</td>
+                  <td>
+                    <button type="button" class="btn btn-sm btn-outline-danger" (click)="removeLine(l)">
+                      ×
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <th colspan="3" class="text-end">Total :</th>
+                  <th colspan="2">{{ grandTotal() }} €</th>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary">{{ isEdit ? 'Mettre à jour' : 'Enregistrer' }}</button>
+            <button type="button" class="btn btn-outline-secondary" (click)="closeModal()">Annuler</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- View Modal -->
+  <div class="modal show" *ngIf="showViewModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content shadow">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title">Détails Facture Fournisseur #{{ viewFactureData?.id }}</h5>
+          <button type="button" class="btn-close btn-close-white" (click)="closeViewModal()"></button>
+        </div>
+        <div class="modal-body">
+          <dl class="row mb-4">
+            <dt class="col-sm-3">Date</dt>
+            <dd class="col-sm-9">{{ viewFactureData?.date }}</dd>
+            <dt class="col-sm-3">Fournisseur</dt>
+            <dd class="col-sm-9">{{ supplierName(viewFactureData?.supplierId!) }}</dd>
+            <dt class="col-sm-3">Numéro Facture</dt>
+            <dd class="col-sm-9">{{ viewFactureData?.invoiceNumber }}</dd>
+            <dt class="col-sm-3">Référence</dt>
+            <dd class="col-sm-9">{{ viewFactureData?.reference }}</dd>
+          </dl>
+
+          <h6 class="text-secondary">Lignes d'articles</h6>
+          <table class="table table-sm table-bordered mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Article</th>
+                <th>PU</th>
+                <th>Qté</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let l of viewFactureData?.lines">
+                <td>{{ getArticleName(l.articleId) }}</td>
+                <td>{{ l.unitPrice }} €</td>
+                <td>{{ l.quantity }}</td>
+                <td>{{ (l.unitPrice * l.quantity) | number: '1.2-2' }} €</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <th colspan="3" class="text-end">Total :</th>
+                <th>{{ totalFactureAmount(viewFactureData!) | number: '1.2-2' }} €</th>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline-secondary" (click)="closeViewModal()">Fermer</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

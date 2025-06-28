@@ -1,0 +1,51 @@
+/* You can add global styles to this file, and also import other style files */
+/* Main content wrapper */
+.main-content {
+  min-height: calc(100vh - 60px); /* full height minus navbar */
+  padding: 2rem 3rem;
+  background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+  /* subtle gradient of very light blue-gray tones for freshness */
+  color: #212529; /* dark text for readability */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+/* Optional: add a subtle shadow or border to content cards or sections */
+.content-section {
+  background-color: white;
+  border-radius: 0.5rem;
+  padding: 1.5rem 2rem;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
+  transition: box-shadow 0.3s ease;
+}
+
+.content-section:hover {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Typography */
+h1, h2, h3, h4 {
+  color: #102a43; /* dark slate blue */
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+p, label {
+  font-weight: 400;
+  line-height: 1.6;
+  color: #334e68; /* softer dark blue */
+}
+
+/* Links in content */
+a {
+  color: #1c7ed6; /* same accent blue */
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: #1864ab; /* slightly darker blue on hover */
+  text-decoration: underline;
+}

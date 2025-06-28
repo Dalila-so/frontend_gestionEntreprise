@@ -1,0 +1,52 @@
+/* Override Bootstrap bg colors with nicer shades */
+.card.bg-primary {
+  background-color: #009eb3 !important; /* deeper blue */
+  color: #fff;
+}
+
+.card.bg-success {
+  background-color: #871975cb !important; /* Bootstrap green */
+  color: #fff;
+}
+
+.card.bg-warning {
+  background-color: #7493f0 !important; /* softer warm yellow */
+  color: #212529; /* darker text for contrast */
+}
+
+/* Card header icons and text alignment */
+.card-header {
+  font-weight: 600;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+}
+
+.card-header i.bi {
+  font-size: 1.4rem;
+  margin-right: 8px;
+}
+
+/* Card body tweaks */
+.card-body {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.card-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.card-text {
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+
+/* Optional: add subtle shadow for elevation */
+.card {
+  box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.1);
+  border: none;
+  border-radius: 0.5rem;
+}

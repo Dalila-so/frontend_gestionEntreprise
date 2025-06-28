@@ -1,0 +1,73 @@
+/* dashboard.component.css */
+
+/* Cards */
+.card {
+  cursor: default;
+  transition: transform 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  color: #333;
+  border-radius: 0.4rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.12);
+}
+
+/* Card header */
+.card-header {
+  background-color: #f7f9fc;
+  border-bottom: 1px solid #ddd;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #2c3e50;
+}
+
+.card-header i {
+  font-size: 1.25rem;
+  margin-right: 0.5rem;
+  color: #2980b9; /* soft blue */
+}
+
+/* Card body text */
+.card-title {
+  font-weight: 700;
+  font-size: 1.6rem;
+  color: #34495e;
+}
+
+.card-text {
+  font-size: 0.9rem;
+  color: #7f8c8d;
+}
+
+/* List group for monthly orders */
+.list-group-item {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #34495e;
+  border: 1px solid #ddd;
+  margin-bottom: 0.3rem;
+  border-radius: 0.3rem;
+  background-color: #fff;
+}
+
+/* Badge inside list */
+.list-group-item .badge {
+  font-size: 1rem;
+  background-color: #2980b9;
+  color: #fff;
+  min-width: 38px;
+  text-align: center;
+  border-radius: 0.3rem;
+}
+
+/* Section title */
+h3 {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  color: #2c3e50;
+}

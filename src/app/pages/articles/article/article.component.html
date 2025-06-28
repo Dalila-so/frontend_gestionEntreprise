@@ -1,0 +1,137 @@
+<div class="container mt-4">
+  <div class="row mb-3 align-items-center">
+    <div class="col-md-6">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Search articles..."
+        [(ngModel)]="searchTerm"
+      />
+    </div>
+    <div class="col-md-6 text-end">
+      <button class="btn btn-primary" (click)="openModal()">New Article</button>
+    </div>
+  </div>
+
+  <!-- Stock Analysis -->
+  <div class="row mb-4">
+    <div class="col-md-4">
+      <div class="alert alert-info">
+        Total Articles: <strong>{{ totalArticles }}</strong>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="alert alert-warning">
+        Total Stock: <strong>{{ totalStock }}</strong>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="alert alert-success">
+        Total Value: <strong>{{ totalValue | number:'1.2-2' }} TND</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- Articles Table -->
+  <table class="table table-bordered table-striped">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th class="text-end">Price</th>
+        <th class="text-end">Stock</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let a of filteredArticles()">
+        <td>{{ a.id }}</td>
+        <td>{{ a.name }}</td>
+        <td class="text-end">{{ a.price | number: '1.2-2' }}</td>
+        <td class="text-end">{{ a.stock }}</td>
+        <td>
+  <button class="btn btn-sm btn-outline-secondary me-1" (click)="editArticle(a)">Edit</button>
+  <button class="btn btn-sm btn-outline-danger me-1" (click)="deleteArticle(a.id)">Delete</button>
+  <button class="btn btn-sm btn-outline-primary" (click)="openMovementModal(a)">View</button>
+</td>
+      </tr>
+    </tbody>
+  </table>
+
+  
+
+  <!-- Modal -->
+  <div class="modal" tabindex="-1" [ngClass]="{'show d-block': showModal}" *ngIf="showModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form #modalForm="ngForm" (ngSubmit)="saveArticle(modalForm)">
+          <div class="modal-header">
+            <h5 class="modal-title">{{ isEditMode ? 'Edit Article' : 'New Article' }}</h5>
+            <button type="button" class="btn-close" (click)="closeModal(modalForm)"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">Name</label>
+              <input class="form-control" [(ngModel)]="newArticle.name" name="name" required />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Price</label>
+              <input type="number" class="form-control" [(ngModel)]="newArticle.price" name="price" min="0" step="0.01" />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">Stock</label>
+              <input type="number" class="form-control" [(ngModel)]="newArticle.stock" name="stock" min="0" />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="closeModal(modalForm)">Cancel</button>
+            <button type="submit" class="btn btn-primary" [disabled]="modalForm.invalid">
+              {{ isEditMode ? 'Update' : 'Save' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal" tabindex="-1" [ngClass]="{'show d-block': showMovementModal}" *ngIf="showMovementModal">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">📦 Mouvements - {{ selectedArticle?.name }}
+        </h5>
+        <button type="button" class="btn-close" (click)="closeMovementModal()"></button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Quantité</th>
+              <th>Opération</th>
+              <th>Entrepôt</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let m of getArticleMovements(selectedArticle?.id || 0)">
+              <td>{{ m.date }}</td>
+              <td>{{ m.quantity }}</td>
+              <td>
+                <span [ngClass]="{
+                  'text-success fw-bold': m.operation === 'entrée',
+                  'text-danger fw-bold': m.operation === 'sortie'
+                }">
+                  {{ m.operation }}
+                </span>
+              </td>
+              <td>{{ m.warehouse }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeMovementModal()">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

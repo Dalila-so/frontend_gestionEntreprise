@@ -1,0 +1,38 @@
+<div class="container mt-5" style="max-width: 400px;">
+  <h2 class="text-center text-primary mb-4">
+    <i class="bi bi-person-plus"></i> Sign Up
+  </h2>
+
+  <div *ngIf="errorMsg" class="alert alert-danger">{{ errorMsg }}</div>
+  <div *ngIf="successMsg" class="alert alert-success">{{ successMsg }}</div>
+
+  <form #signupForm="ngForm" (ngSubmit)="onSignup(signupForm)" novalidate>
+    <div class="mb-3">
+      <label class="form-label">Email</label>
+      <input type="email" class="form-control" required
+             [(ngModel)]="email" name="email" [disabled]="loading" />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Password</label>
+      <input type="password" class="form-control" required
+             [(ngModel)]="password" name="password" [disabled]="loading" />
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Confirm Password</label>
+      <input type="password" class="form-control" required
+             [(ngModel)]="confirmPassword" name="confirmPassword" [disabled]="loading" />
+    </div>
+
+    <button class="btn btn-primary w-100" type="submit"
+            [disabled]="!signupForm.valid || loading">
+      {{ loading ? 'Creating...' : 'Sign Up' }}
+    </button>
+
+    <p class="text-center mt-3">
+      Already have an account?
+      <a routerLink="/login">Login</a>
+    </p>
+  </form>
+</div>

@@ -1,0 +1,80 @@
+<div class="d-flex flex-column" style="min-height: 100vh;">
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-4">
+    <a class="navbar-brand fw-bold" href="#">Gestion de Entreprise</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+      aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav ms-auto">
+
+        <li class="nav-item">
+          <a routerLink="/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+            class="nav-link">📊 Dashboard</a>
+        </li>
+        
+   <li class="nav-item">
+    
+
+          <a routerLink="/articles" routerLinkActive="active" class="nav-link">📦 Stock</a>
+        </li>
+        <!-- Contact Dropdown -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            👥 Contact
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark">
+            <li><a routerLink="/clients" routerLinkActive="active" class="dropdown-item">Clients</a></li>
+            <li><a routerLink="/fournisseur" routerLinkActive="active" class="dropdown-item">Fournisseurs</a></li>
+          </ul>
+        </li>
+
+
+     
+
+
+
+
+
+        <!-- Vente Dropdown -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            🛒 Vente
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark">
+            <li><a routerLink="/bonlivraison" routerLinkActive="active" class="dropdown-item">Bon Livraison</a></li>
+            <li><a routerLink="/bons-sortie" routerLinkActive="active" class="dropdown-item">Bon Sortie</a></li>
+            <li><a routerLink="/factureclient" routerLinkActive="active" class="dropdown-item">Facture Client</a></li>
+          </ul>
+        </li>
+
+        <!-- Achat Dropdown -->
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            🛒 Achat
+          </a>
+          <ul class="dropdown-menu dropdown-menu-dark">
+            <li><a routerLink="/bons-entree" routerLinkActive="active" class="dropdown-item">Bon Reception</a></li>
+            <li><a routerLink="/commandeclient" routerLinkActive="active" class="dropdown-item">Bon Commande</a></li>
+            <li><a routerLink="/facturefournisseur" routerLinkActive="active" class="dropdown-item">Facture Frs</a></li>
+          </ul>
+        </li>
+<!-- … other <li> items … -->
+
+<li class="nav-item">
+  <a class="nav-link text-warning fw-bold" style="cursor:pointer" (click)="logout()">
+    🔒 Déconnexion
+  </a>
+</li>
+
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="flex-grow-1 p-4 bg-light">
+    <router-outlet></router-outlet>
+  </main>
+</div>

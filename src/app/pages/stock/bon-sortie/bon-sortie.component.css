@@ -1,0 +1,20 @@
+/* Basic spacing and sizing for modal backdrops (if you want to add your own) */
+
+.modal.show {
+  display: block;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-dialog {
+  max-width: 900px;
+}
+
+.table-sm td,
+.table-sm th {
+  vertical-align: middle;
+}
+
+.badge.bg-success {
+  font-size: 1rem;
+  padding: 0.35em 0.65em;
+}

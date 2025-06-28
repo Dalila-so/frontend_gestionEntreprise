@@ -1,0 +1,95 @@
+/* Fixed transparent navbar */
+nav.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(255, 255, 255, 0.85); /* white with transparency */
+  backdrop-filter: saturate(180%) blur(10px); /* nice frosted glass effect */
+  box-shadow: 0 1px 8px rgba(16, 16, 16, 0.542);
+  border-bottom: 1px solid rgba(200, 200, 200, 0.3);
+  z-index: 1030; /* above content */
+  padding: 0.7rem 2rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  transition: background-color 100s ease;
+}
+
+/* Increase navbar height slightly */
+nav.navbar .navbar-brand {
+  font-weight: 600;
+  font-size: 1.4rem;
+  color: #677787a7;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+}
+
+/* Nav links: subtle gray, clear and airy */
+nav.navbar .nav-link {
+  color: #a2a8ae;
+  font-weight: 500;
+  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  transition: color 0.3s ease, background-color 0.3s ease;
+}
+
+/* Hover and active link states: soft highlight */
+nav.navbar .nav-link:hover,
+nav.navbar .nav-link.active {
+  color: #a8adb2; /* nice bright blue */
+  background-color: rgba(252, 254, 255, 0.158);
+}
+
+/* Dropdown menu: white with slight shadow and rounded */
+nav.navbar .dropdown-menu {
+  background-color: #ffffffd4;
+  border: 1px solid #dee2e6;
+  border-radius: 0.3rem;
+  box-shadow: 0 6px 12px rgba(11, 11, 11, 0.1);
+  min-width: 12rem;
+  padding: 0.4rem 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  transform-origin: top center;
+  margin-top: 0.25rem;
+}
+
+/* Dropdown show animation */
+nav.navbar .dropdown-menu.show {
+  opacity: 1;
+  transform: scaleY(1);
+}
+nav.navbar .dropdown-menu {
+  opacity: 0;
+  transform: scaleY(0.95);
+}
+
+/* Dropdown items */
+nav.navbar .dropdown-item {
+  color: #495057;
+  padding: 0.4rem 1.5rem;
+  font-weight: 500;
+  border-radius: 0.25rem;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* Dropdown hover */
+nav.navbar .dropdown-item:hover,
+nav.navbar .dropdown-item.active,
+nav.navbar .dropdown-item:focus {
+  background-color: #1c7ed6;
+  color: white;
+  font-weight: 600;
+}
+
+/* Responsive toggler */
+.navbar-toggler {
+  border-color: #1c7ed6;
+}
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='%231c7ed6' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+/* Add padding to body content to avoid being hidden behind navbar */
+body {
+  padding-top: 60px; /* Adjust based on navbar height */
+}

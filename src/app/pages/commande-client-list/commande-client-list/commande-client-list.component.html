@@ -1,0 +1,33 @@
+<div class="container mt-4">
+  <h2>Commandes Clients</h2>
+  <button class="btn btn-primary mb-3" (click)="onAdd()">Add New Commande</button>
+
+  <div *ngIf="loading">Loading...</div>
+  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+  <table class="table table-bordered" *ngIf="!loading && commandes.length > 0">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Client ID</th>
+        <th>Date</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let commande of commandes">
+        <td>{{ commande.id }}</td>
+        <td>{{ commande.clientId }}</td>
+        <td>{{ commande.date | date: 'shortDate' }}</td>
+        <td>{{ commande.status }}</td>
+        <td>
+          <button class="btn btn-sm btn-warning me-2" (click)="onEdit(commande.id!)">Edit</button>
+          <button class="btn btn-sm btn-danger" (click)="onDelete(commande.id!)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="!loading && commandes.length === 0">No commandes found.</div>
+</div>

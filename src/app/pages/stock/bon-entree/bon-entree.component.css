@@ -1,0 +1,53 @@
+/* Prevent background scroll */
+body.modal-open {
+  overflow: hidden;
+}
+
+/* Center modal with proper layering and click-through behavior */
+.modal.show {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  background-color: rgba(0, 0, 0, 0.5); /* optional: for backdrop */
+}
+
+/* Allow content interaction */
+.modal-dialog {
+  z-index: 1051;
+  max-width: 800px;
+  width: 95%;
+}
+
+/* Avoid backdrop overlay issues */
+.modal-backdrop.show {
+  display: none; /* hide manually added backdrops if using `.modal.show` */
+}
+h2, h5 {
+  font-weight: 600;
+}
+
+.card-header h5 {
+  font-size: 1rem;
+  margin-bottom: 0;
+}
+
+.badge.bg-success {
+  font-size: 0.85rem;
+}
+
+.table thead th {
+  font-size: 0.875rem;
+  color: #555;
+}
+
+.table tbody td {
+  vertical-align: middle;
+  font-size: 0.9rem;
+}
+
+button.btn-sm i {
+  font-size: 0.85rem;
+}

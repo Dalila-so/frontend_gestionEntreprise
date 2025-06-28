@@ -1,0 +1,38 @@
+<div class="container mt-4">
+  <h2>Dashboard</h2>
+  <div class="row">
+    <div class="col-md-4" *ngFor="let card of cards">
+      <div class="card text-white mb-3" [ngClass]="'bg-' + card.color">
+        <div class="card-header d-flex align-items-center">
+          <i class="bi me-2" [ngClass]="card.icon"></i>
+          <span>{{ card.title }}</span>
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">{{ card.value }}</h5>
+          <p class="card-text">{{ card.description }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-4">
+    <h4>Commandes par mois</h4>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Mois</th>
+          <th>Nombre de commandes</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of commandesParMois">
+          <td>{{ item.month }}</td>
+          <td>{{ item.count }}</td>
+        </tr>
+        <tr *ngIf="commandesParMois.length === 0">
+          <td colspan="2" class="text-center text-muted">Aucune donnée disponible</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
